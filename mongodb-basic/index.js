@@ -99,6 +99,27 @@ async function run() {
     })
 
 
+    //find user by email
+    app.get("/users/user/:email" , async(req,res) => {
+      const {email} = req.params;
+
+      try{
+        const user = await usersCollection.find({email : email , age : { $gt : 19 }} , {projection: {name :1}}).toArray();
+        res.json({
+          message:"your user list in below",
+          user
+        })
+      }catch(error){
+        res.status(403).json({
+          message:"Failed to fetch to users",
+          error
+        })
+      }
+      
+
+    })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
