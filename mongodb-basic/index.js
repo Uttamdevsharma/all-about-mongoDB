@@ -1,7 +1,13 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 3000
+
+
+//middleware
+app.use(express.json())
+app.use(cors())
 
 
 
@@ -26,12 +32,26 @@ async function run() {
     //create db and collection
     const db = client.db("mydatabase");
     const usersCollection = db.collection("users")
-    const jobsCollection =db.collection("jobs")
-     
-    //add user to the users collection
-     const user = {name : "Uttam" , age : 24 , email : "uttam@gmail.com"}
-    usersCollection.insertOne(user);
+    
 
+
+    //add new user to users collection
+    app.post('/add-user', async(req,res) => {
+      
+      try{
+        const newUser =req.body;
+      const result = await usersCollection.insertMany(newUser)
+      res.status(200).json({
+        message:"User created successfully",
+        result
+      })
+      }catch(error){
+        res.status(400).json({
+          message: "failed to create user",
+          error
+        })
+      }
+    })
 
 
 
