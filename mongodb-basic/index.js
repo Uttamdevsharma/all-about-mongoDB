@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 3000
 
 
@@ -48,6 +48,51 @@ async function run() {
       }catch(error){
         res.status(400).json({
           message: "failed to create user",
+          error
+        })
+      }
+    })
+
+
+    //find all users
+    app.get("/users", async(req,res) => {
+      try{
+        const users = await usersCollection.find().toArray();
+        console.log(users)
+
+        res.status(200).json({
+          message : "Your user List is below",
+          users
+        })
+
+      }catch(error){
+        res.status(403).json({
+          message:"Failed to fetch users",
+          error
+        })
+      }
+    })
+
+    //find single user by id
+    app.get("/users/:id" , async(req,res) =>{
+      try{
+        const {id} = req.params;
+        const user = await usersCollection.findOne({_id: new ObjectId(id)})
+        if(!user){
+          return res.status(404).json({
+            message: "User not found"
+          })
+        }
+
+        res.status(200).json({
+          message : "successfully find user",
+          user
+        })
+
+
+      }catch(error){
+        res.status(403).json({
+          message:"Failed to fetch this user",
           error
         })
       }
