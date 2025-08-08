@@ -92,7 +92,7 @@ async function run() {
 
       }catch(error){
         res.status(403).json({
-          message:"Failed to fetch this user",
+          message:"Failed to fetch this user , please try again",
           error
         })
       }
