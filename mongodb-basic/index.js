@@ -177,6 +177,26 @@ async function run() {
       }
     })
 
+    //comparison operator - $eq, $gt , $gte , $in , $lt, $lte,$ne , $ nin
+    app.get("/users/older-than/:age",async(req,res)=>{
+      const {age} = req.params
+
+      try{
+        const result = await usersCollection.find({ age : { $ne : parseInt(age)}}).toArray();
+        res.json(result);
+      }catch(error){
+        send.json({
+          message : "unsuccesfull"
+        })
+
+      }
+    })
+
+    
+
+    //logical operator -$and , $or , $not , $nor
+
+
 
 
 // delete conditions
