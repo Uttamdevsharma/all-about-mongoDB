@@ -178,7 +178,28 @@ async function run() {
     })
 
 
-    //
+
+// delete conditions
+app.delete("/delete-user/status", async(req, res) => {
+  const { status } = req.body;
+  try {
+
+    const result = await usersCollection.deleteMany({ status: status });
+
+    res.json({
+      message: "Deleted successfully",
+      result
+    });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      message: "Not successfully",
+      error: error.message
+    });
+  }
+});
+
 
 
 
