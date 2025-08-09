@@ -114,9 +114,67 @@ async function run() {
           message:"Failed to fetch to users",
           error
         })
+      }    
+
+    })
+
+    //update information to db
+    app.patch("/update-user/:id" , async(req,res) => {
+      const {id} = req.params;
+      const userData = req.body;
+
+      try{
+
+        const filter = {_id : new ObjectId(id)}
+
+        const updateInfo = {
+          $set: {
+            ...userData 
+          }               
+          }
+
+        const options = {upsert : true} 
+        
+        const result = await usersCollection.updateOne(filter,updateInfo,options);
+        res.json(result)
+
+        }catch(error){
+          res.status(403).json({
+            message : "not successfully",
+            error
+          })
+        }   
+    })
+
+
+    //update many document
+    app.patch("/users/increase-age" , async(req,res) => {
+      try{
+        const result = await usersCollection.updateMany({},{$inc: {age : 2}})
+        res.json(result)
+
+      }catch(error){
+        res.status(403).json({
+          message : "not successfully",
+          error
+        })
       }
       
+    })
 
+    //delete user
+    app.delete("/delete-user/:id" , async(req,res) => {
+      const {id} = req.params;
+      try{
+        const deleteUser = await usersCollection.deleteOne({_id: new ObjectId(id)})
+        res.json(deleteUser)
+
+      }catch(error){
+        res.status(404).json({
+          message:"not successfull",
+          error
+        })
+      }
     })
 
 
