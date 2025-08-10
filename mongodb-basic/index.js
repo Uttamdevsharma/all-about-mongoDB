@@ -278,6 +278,18 @@ app.get("/element-operators/with-status" , async(req,res) => {
 })
 
 
+// evaluation operator
+app.get("/evaluation-operator/name-starts-a" ,async(req,res) => {
+  const users = await usersCollection.find({
+    name: {$regex : "^A" ,$options: 'i'}
+  }).toArray();
+  res.json(users)
+} )
+
+
+
+
+
 
 
     // Send a ping to confirm a successful connection
