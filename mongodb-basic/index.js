@@ -55,23 +55,23 @@ async function run() {
 
 
     //find all users
-    app.get("/users", async(req,res) => {
-      try{
-        const users = await usersCollection.find().sort({age: -1,name: 1}).toArray();
-        console.log(users)
+    // app.get("/users", async(req,res) => {
+    //   try{
+    //     const users = await usersCollection.find().sort({age: -1,name: 1}).toArray();
+    //     console.log(users)
 
-        res.status(200).json({
-          message : "Your user List is below",
-          users
-        })
+    //     res.status(200).json({
+    //       message : "Your user List is below",
+    //       users
+    //     })
 
-      }catch(error){
-        res.status(403).json({
-          message:"Failed to fetch users",
-          error
-        })
-      }
-    })
+    //   }catch(error){
+    //     res.status(403).json({
+    //       message:"Failed to fetch users",
+    //       error
+    //     })
+    //   }
+    // })
 
     //find single user by id
     app.get("/users/:id" , async(req,res) =>{
@@ -308,6 +308,24 @@ res.json(users);
     // const users = await usersCollection.find().skip((page -1 *limit).limit(limit)). toArray();
     const users = await usersCollection.find().sort({age: -1}).skip(skip).limit(limit).toArray();
     res.json(users);
+  })
+
+  //find all users(using dynamic pagination)
+  app.get("/users", async(req,res) => {
+    try{
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
+      const skip = (page - 1) * limit;
+      const users  = await usersCollection.find().sort({age: -1}).skip(skip).limit(limit).toArray();
+      const totalUsers = await usersCollection.countDocuments();
+      res.json({users , totalUsers});
+
+    }catch(error){
+      res.status(400).json({
+        message : "Failed",
+        error
+      })
+    }
   })
 
 
