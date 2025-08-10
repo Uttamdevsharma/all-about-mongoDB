@@ -57,7 +57,7 @@ async function run() {
     //find all users
     app.get("/users", async(req,res) => {
       try{
-        const users = await usersCollection.find().toArray();
+        const users = await usersCollection.find().sort({age: -1,name: 1}).toArray();
         console.log(users)
 
         res.status(200).json({
@@ -278,13 +278,23 @@ app.get("/element-operators/with-status" , async(req,res) => {
 })
 
 
-// evaluation operator
+// evaluation operator -$reges
 app.get("/evaluation-operator/name-starts-a" ,async(req,res) => {
   const users = await usersCollection.find({
     name: {$regex : "^A" ,$options: 'i'}
   }).toArray();
   res.json(users)
 } )
+
+
+//arry operators -$all , $size
+app.get("/array-operators/skills" , async(req,res) => {
+  const users = await usersCollection.find({
+    // skill : {$all : ["js","nodejs"]}
+    skill : {$size : 3}
+}).toArray();
+res.json(users);
+})
 
 
 
