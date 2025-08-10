@@ -296,6 +296,20 @@ app.get("/array-operators/skills" , async(req,res) => {
 res.json(users);
 })
 
+  //pagination (3 users per page)
+  app.get("/users/page/:page" , async(req,res) => {
+    const page = parseInt(req.params.page) || 1;
+
+    const limit = 5
+    const skip=(page - 1) * limit;
+     
+
+    //pagination formula
+    // const users = await usersCollection.find().skip((page -1 *limit).limit(limit)). toArray();
+    const users = await usersCollection.find().sort({age: -1}).skip(skip).limit(limit).toArray();
+    res.json(users);
+  })
+
 
 
 
