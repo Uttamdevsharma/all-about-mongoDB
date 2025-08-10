@@ -177,29 +177,8 @@ async function run() {
       }
     })
 
-    //comparison operator - $eq, $gt , $gte , $in , $lt, $lte,$ne , $ nin
-    app.get("/users/older-than/:age",async(req,res)=>{
-      const {age} = req.params
 
-      try{
-        const result = await usersCollection.find({ age : { $ne : parseInt(age)}}).toArray();
-        res.json(result);
-      }catch(error){
-        send.json({
-          message : "unsuccesfull"
-        })
-
-      }
-    })
-
-    
-
-    //logical operator -$and , $or , $not , $nor
-
-
-
-
-// delete conditions
+    // delete conditions
 app.delete("/delete-user/status", async(req, res) => {
   const { status } = req.body;
   try {
@@ -219,6 +198,84 @@ app.delete("/delete-user/status", async(req, res) => {
     });
   }
 });
+
+
+
+
+
+
+
+    //comparison operator - $eq, $gt , $gte , $in , $lt, $lte,$ne , $ nin
+    app.get("/users/older-than/:age",async(req,res)=>{
+      const {age} = req.params
+
+      try{
+        const result = await usersCollection.find({ age : { $ne : parseInt(age)}}).toArray();
+        res.json(result);
+      }catch(error){
+        send.json({
+          message : "unsuccesfull"
+        })
+
+      }
+    })
+
+
+
+    //logical operator -$and , $or , $not , $nor
+    app.get("/users/logical-operators/and",async(req,res) => {
+
+      const users = await usersCollection.find({
+        $and: [
+          {age : {$gte : 27}},
+          {age: {$lte: 30}}
+        ]
+      }).toArray();
+
+      res.json(users)
+
+    })
+    //not operator practice
+    app.get("/users/not-operators/and" ,async(req,res) => {
+
+      const result = await usersCollection.find({
+        age : { $not : { $gt : 27}}
+      }).toArray();
+      res.json(result);
+    })
+    //nor operator - mane eitao na abar eitao na
+    app.get("/users/nor-operator" , async(req,res) => {
+
+      const result = await usersCollection.find({
+        $nor: [
+          {age : { $gt : 29}},
+          {name: "user 5"}
+        ]
+      }).toArray();
+      res.json(result);
+    })
+
+
+
+
+
+
+//element operator - $exists , $type
+app.get("/element-operators/with-status" , async(req,res) => {
+
+   //extis-example
+  // const result = await usersCollection.find({
+  //   study : { $exists : false}
+  // }).toArray();
+
+
+  const result =await usersCollection.find({
+    age : { $type : "string"}
+  }).toArray();
+
+  res.json(result)
+
+})
 
 
 
