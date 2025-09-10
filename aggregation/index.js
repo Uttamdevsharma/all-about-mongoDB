@@ -2,7 +2,7 @@ const express = require('express')
 const app = express();
 const cors = require('cors')
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://uttamrohit4545_db_user:HB993D7dpgvV78Bv@cluster0.046wfz5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URL;
 const port = process.env.PORT || 3000
 
 
@@ -24,6 +24,25 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const db = client.db("mydatabase")
+    const usersCollection = db.collection("users")
+
+    app.post("/users" , async(req,res) => {
+        try{
+            const user = req.body;
+
+        const res = await usersCollection.insertOne(user);
+        res.json({
+            mes : "successfully assigned",
+            res
+        })
+    }catch(error){
+        error
+    }
+        
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
