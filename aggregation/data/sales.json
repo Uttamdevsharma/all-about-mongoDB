@@ -1,0 +1,40 @@
+[
+    {
+      "year": 2023,
+      "region": "West",
+      "amount": 250,
+      "customer": "David",
+      "transactions": [
+        { "item": "Monitor", "amount": 250 }
+      ]
+    },
+    {
+      "year": 2023,
+      "region": "North",
+      "amount": 300,
+      "customer": "Eve",
+      "transactions": [
+        { "item": "Keyboard", "amount": 150 },
+        { "item": "Headphones", "amount": 150 }
+      ]
+    },
+    {
+      "year": 2023,
+      "region": "South",
+      "amount": 350,
+      "customer": "Frank",
+      "transactions": [
+        { "item": "Headphones", "amount": 350 }
+      ]
+    },
+    {
+      "year": 2023,
+      "region": "East",
+      "amount": 400,
+      "customer": "Grace",
+      "transactions": [
+        { "item": "Laptop", "amount": 400 }
+      ]
+    }
+  ]
+  

@@ -2,13 +2,15 @@ const express = require('express')
 const app = express();
 const cors = require('cors')
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = process.env.MONGODB_URL;
 const port = process.env.PORT || 3000
 
 
 //middleware
 app.use(express.json())
 app.use(cors())
+
+require('dotenv').config();
+const uri = process.env.MONGODB_URL;
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -28,30 +30,33 @@ async function run() {
     const db = client.db("mydatabase")
     const usersCollection = db.collection("users")
 
-    app.post("/users" , async(req,res) => {
-        try{
+    app.post("/users-add", async (req, res) => {
+        try {
             const user = req.body;
-
-        const res = await usersCollection.insertOne(user);
-        res.json({
-            mes : "successfully assigned",
-            res
-        })
-    }catch(error){
-        error
-    }
-        
-    })
-
+            const result = await usersCollection.insertOne(user);
+            res.json({
+                message: "Successfully assigned",
+                result
+            });
+        } catch (error) {
+            res.status(500).json({ message: "Failed to insert user", error: error.message });
+        }
+    });
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
+
+
+app.listen(port , () => {
+    console.log(`server is running on port ${port}`)
+})
 
 
 // username - uttamrohit4545_db_user
