@@ -17,7 +17,7 @@ const uri = process.env.MONGODB_URL;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    // strict: true,
     deprecationErrors: true,
   }
 });
@@ -28,20 +28,21 @@ async function run() {
     await client.connect();
 
     const db = client.db("mydatabase")
-    const usersCollection = db.collection("users")
+    const salesCollection = db.collection("sales")
+    const regionsCollection = db.collection("regions")
 
-    app.post("/users-add", async (req, res) => {
-        try {
-            const user = req.body;
-            const result = await usersCollection.insertOne(user);
-            res.json({
-                message: "Successfully assigned",
-                result
-            });
-        } catch (error) {
-            res.status(500).json({ message: "Failed to insert user", error: error.message });
-        }
-    });
+
+
+//    //single purpose aggregation - countDocuments , distinct
+//    const salesDocument = await salesCollection.countDocuments();
+//    console.log("total document is:",salesDocument);
+
+//    const regionDistinct = await salesCollection.distinct("region")
+//    console.log(regionDistinct)
+
+
+
+
     
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
