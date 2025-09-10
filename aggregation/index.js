@@ -31,14 +31,63 @@ async function run() {
     const salesCollection = db.collection("sales")
     const regionsCollection = db.collection("regions")
 
-
-
-//    //single purpose aggregation - countDocuments , distinct
+   //single purpose aggregation - countDocuments , distinct
 //    const salesDocument = await salesCollection.countDocuments();
 //    console.log("total document is:",salesDocument);
 
 //    const regionDistinct = await salesCollection.distinct("region")
 //    console.log(regionDistinct)
+
+
+//pipeline stages and operators
+
+const result = await salesCollection.aggregate(
+    [
+        {
+          $match:
+            /**
+             * query: The query in MQL.
+             */
+            {
+              year: 2023
+            }
+        },
+        {
+          $group:
+            /**
+             * _id: The id of the group.
+             * fieldN: The first field name.
+             */
+            {
+              _id: "$region",
+              totalSales: {
+                $sum: "$amount"
+              }
+            }
+        },
+        // {
+        //   $sort: /**
+        //  * Provide any number of field/order pairs.
+        //  */
+        // {
+        //   field1: sortOrder
+        // }
+        // }
+        {
+          $sort:
+            /**
+             * Provide any number of field/order pairs.
+             */
+            {
+              totalSales: 1
+            }
+        }
+      ]
+
+).toArray()
+
+console.log(result)
+
 
 
 
