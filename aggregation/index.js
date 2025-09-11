@@ -94,7 +94,7 @@ const result = await salesCollection.aggregate([
 ]).toArray()
 
 
-//advance stage lookup and unwind
+//advance stage lookup 
 const res1 = await salesCollection.aggregate([
   {
     $match:
@@ -137,11 +137,56 @@ const res1 = await salesCollection.aggregate([
   }
 ]).toArray()
 
+//advance stage unwind
+const res2 = await salesCollection.aggregate([
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        year: 2023
+      }
+  },
+  {
+    $project:
+      /**
+       * specifications: The fields to
+       *   include or exclude.
+       */
+      {
+        customer: 1,
+        transactions: 1
+      }
+  },
+  {
+    $unwind:
+      /**
+       * path: Path to the array field.
+       * includeArrayIndex: Optional name for index.
+       * preserveNullAndEmptyArrays: Optional
+       *   toggle to unwind null and empty values.
+       */
+      {
+        path: "$transactions"
+      }
+  },
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$transactions.item",
+        totalSales: {
+          $sum: "$transactions.amount"
+        }
+      }
+  }
+]).toArray()
 
-
-
-
-console.log(res1)
+console.log(res2)
 
 
 
