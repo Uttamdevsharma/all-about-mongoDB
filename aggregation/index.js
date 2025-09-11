@@ -32,61 +32,116 @@ async function run() {
     const regionsCollection = db.collection("regions")
 
    //single purpose aggregation - countDocuments , distinct
-//    const salesDocument = await salesCollection.countDocuments();
-//    console.log("total document is:",salesDocument);
+  // const salesDocument = await salesCollection.countDocuments();
+  //  console.log("total document is:",salesDocument);
 
-//    const regionDistinct = await salesCollection.distinct("region")
-//    console.log(regionDistinct)
+  //  const regionDistinct = await salesCollection.distinct("region")
+  //   console.log(regionDistinct)
 
 
-//pipeline stages and operators
 
-const result = await salesCollection.aggregate(
-    [
-        {
-          $match:
-            /**
-             * query: The query in MQL.
-             */
-            {
-              year: 2023
-            }
-        },
-        {
-          $group:
-            /**
-             * _id: The id of the group.
-             * fieldN: The first field name.
-             */
-            {
-              _id: "$region",
-              totalSales: {
-                $sum: "$amount"
-              }
-            }
-        },
-        // {
-        //   $sort: /**
-        //  * Provide any number of field/order pairs.
-        //  */
-        // {
-        //   field1: sortOrder
-        // }
-        // }
-        {
-          $sort:
-            /**
-             * Provide any number of field/order pairs.
-             */
-            {
-              totalSales: 1
-            }
+// basic pipeline stage - match, group,sort, project, limit
+const result = await salesCollection.aggregate([
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        year: 2023
+      }
+  },
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$region",
+        totalSales: {
+          $sum: "$amount"
         }
-      ]
+      }
+  },
+  {
+    $sort:
+      /**
+       * Provide any number of field/order pairs.
+       */
+      {
+        totalSales: -1
+      }
+  },
+  {
+    $project:
+      /**
+       * specifications: The fields to
+       *   include or exclude.
+       */
+      {
+        totalSales: 1,
+        _id: 0
+      }
+  },
+  {
+    $limit:
+      /**
+       * Provide the number of documents to limit.
+       */
+      3
+  }
+]).toArray()
 
-).toArray()
 
-console.log(result)
+//advance stage lookup and unwind
+const res1 = await salesCollection.aggregate([
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        year: 2023
+      }
+  },
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$region",
+        totalSales: {
+          $sum: "$amount"
+        }
+      }
+  },
+  {
+    $lookup:
+      /**
+       * from: The target collection.
+       * localField: The local join field.
+       * foreignField: The target join field.
+       * as: The name for the results.
+       * pipeline: Optional pipeline to run on the foreign collection.
+       * let: Optional variables to use in the pipeline field stages.
+       */
+      {
+        from: "regions",
+        localField: "_id",
+        foreignField: "regionId",
+        as: "regionInfo"
+      }
+  }
+]).toArray()
+
+
+
+
+
+console.log(res1)
 
 
 
